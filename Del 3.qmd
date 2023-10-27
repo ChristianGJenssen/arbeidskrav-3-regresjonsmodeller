@@ -1,0 +1,42 @@
+---
+title: "arbeidskrav 3 del 3"
+format: html
+editor: visual
+---
+
+## **Tolking av en regresjonstabell**
+
+```{r}
+library(gt)
+library(ggplot2)
+library(exscidata)
+library(dplyr)
+```
+
+```{r}
+
+# Load necessary libraries (if not already loaded)
+library(dplyr)
+library(ggplot2)
+
+# Subset the data for the relevant variables and time point
+data_subset <- hypertrophy %>% filter(!is.na(SQUAT_3RM), !is.na(FAST_CSA_T1))
+
+# Perform linear regression
+regression_model <- lm(SQUAT_3RM ~ FAST_CSA_T1, data = data_subset)
+
+# Create a regression table
+regression_summary <- summary(regression_model)
+
+# Print the regression table
+print(regression_summary)
+
+# Create a scatterplot with the regression line
+ggplot(data_subset, aes(x = FAST_CSA_T1, y = SQUAT_3RM)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Muscle Cross-Sectional Area at T1", y = "Squat 3RM Strength") +
+  ggtitle("Linear Regression: Muscle CSA at T1 vs. Squat 3RM Strength")
+
+
+```
