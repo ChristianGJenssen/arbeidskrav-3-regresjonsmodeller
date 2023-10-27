@@ -5,13 +5,15 @@ editor: visual
 ---
 
 ```{r}
-install.packages("readxl") 
-library(readxl)            
+#| echo: false
+#| message: false
 
-data <- read_excel("C:/Users/Mariu/AppData/Roaming/Microsoft/Windows/Network Shortcuts/qPCR-results_template_arbkravvv.xlsx")
-head(data)
-install.packages("ggplot2")  
+library(readxl)            
 library(ggplot2)             
+
+
+data <- read_excel("qPCR-results_template_arbkravvv.xlsx")
+head(data)
 
 nytt_data <- data.frame(
   X = data$`Log (sample quan)`, 
@@ -47,4 +49,4 @@ print(standardavvik_mellom_ct)
 ((10^(-1/-4.277)) - 1) * 100
 ```
 
-Tallene og grafen fra mine analyser viser lav reliabilitet. Det er en rekke faktorer som kan ha påvirket resultatene, men det kan trolig være grunnet pippeteringsfeil underveis i behandlingen av DNA tråden. Tallene viste en primer efficiency på 71. Man ønsker å se et tall mellom 90-110.
+Tallene og grafen fra mine analyser viser at primerparene er ineffektive. Det er en rekke faktorer som kan ha påvirket resultatene, men det kan trolig være grunnet pippeteringsfeil underveis i behandlingen av DNA tråden. Tallene viste en primer efficiency på 71. Man ønsker å se et tall mellom 90-110.
