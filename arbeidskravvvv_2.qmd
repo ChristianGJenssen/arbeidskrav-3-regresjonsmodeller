@@ -1,0 +1,50 @@
+---
+title: "arbeidskravvvvv_2"
+format: html
+editor: visual
+---
+
+```{r}
+install.packages("readxl") 
+library(readxl)            
+
+data <- read_excel("C:/Users/Mariu/AppData/Roaming/Microsoft/Windows/Network Shortcuts/qPCR-results_template_arbkravvv.xlsx")
+head(data)
+install.packages("ggplot2")  
+library(ggplot2)             
+
+nytt_data <- data.frame(
+  X = data$`Log (sample quan)`, 
+  y = data$`Avg Ct`             
+)
+
+
+head(nytt_data)
+
+ggplot(nytt_data, aes(x = X, y = y)) +
+  geom_point() +  
+  geom_abline(intercept = 27, slope = -4.277, color = "black", linetype = "dashed") +  
+  labs(x = "log mw", y = "avg ct") +  
+  theme_minimal()
+
+subset_data <- data[, c("Ct1", "Ct2", "Ct3")]
+
+
+custom_sd <- function(x) {
+  if (all(is.na(x))) {
+    return(NA)  
+  } else {
+    return(sd(x, na.rm = TRUE))
+  }
+}
+
+
+standardavvik_mellom_ct <- apply(subset_data, 1, custom_sd)
+
+cat("Standardavvik for variasjonen mellom Ct1, Ct2, og Ct3 (med manglende verdier ignorert):\n")
+print(standardavvik_mellom_ct)
+
+((10^(-1/-4.277)) - 1) * 100
+```
+
+Tallene og grafen fra mine analyser viser lav reliabilitet. Det er en rekke faktorer som kan ha påvirket resultatene, men det kan trolig være grunnet pippeteringsfeil underveis i behandlingen av DNA tråden. Tallene viste en primer efficiency på 71. Man ønsker å se et tall mellom 90-110.
