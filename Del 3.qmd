@@ -17,7 +17,21 @@ library(knitr)
 ```
 
 ```{r}
-#| echo: false
+data_subset <- hypertrophy %>% 
+  filter(!is.na(SQUAT_3RM), !is.na(FAST_CSA_T1))
+
+
+ggplot(data_subset, aes(x = FAST_CSA_T1, y = SQUAT_3RM)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Muscle Cross-Sectional Area at T1", y = "Squat 3RM Strength") +
+  ggtitle("Linear Regression: Muscle CSA at T1 vs. Squat 3RM Strength")
+
+
+
+```
+
+```{r}
 
 data_subset <- hypertrophy %>% 
   filter(!is.na(SQUAT_3RM), !is.na(FAST_CSA_T1))
@@ -31,14 +45,6 @@ p_values <- coef(summary(regression_model))[, "Pr(>|t|)"]
 t_values <- coef(summary(regression_model))[, "t value"]
 standard_errors <- coef(summary(regression_model))[, "Std. Error"]
 
-#scatterplot
-ggplot(data_subset, aes(x = FAST_CSA_T1, y = SQUAT_3RM)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(x = "Muscle Cross-Sectional Area at T1", y = "Squat 3RM Strength") +
-  ggtitle("Linear Regression: Muscle CSA at T1 vs. Squat 3RM Strength")
-
-
 regression_table <- data.frame(
   Coefficient = rownames(coefficients),
   Estimate = round(coefficients, 3),
@@ -48,19 +54,6 @@ regression_table <- data.frame(
 )
 
 print(kable(regression_table, caption = "Regression Table", digits = 2))
-
-# Create a scatterplot with the regression line
-ggplot(data_subset, aes(x = FAST_CSA_T1, y = SQUAT_3RM)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(x = "Muscle Cross-Sectional Area at T1", y = "Squat 3RM Strength") +
-  ggtitle("Linear Regression: Muscle CSA at T1 vs. Squat 3RM Strength")
-
-
-```
-
-```{r}
-
 
 
 ```
