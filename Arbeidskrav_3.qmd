@@ -1,0 +1,265 @@
+---
+title: "arbeidskrav 3"
+format: html
+author: Christian G. Jenssen, Marius Bjekeset, Oliver Bottolfs, Sivert Solheim
+---
+
+```{r}
+#| echo: false
+#| message: false
+
+library(ggplot2)
+library(exscidata)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(readxl)
+```
+
+## Part 1: Lactate thresholds
+
+```{r}
+#| echo: false
+
+
+data <- read_excel("Laktatmalinger_arbeidskrav.xlsx")
+
+
+data_subset <- data %>% filter(ID == 1, TEST == 1)
+
+
+data_subset <- data_subset %>% filter(!is.na(LAKTAT))
+
+
+model <- lm(LAKTAT ~ W, data = data_subset)
+
+
+new_w <- seq(0, 300, length.out = 100)
+
+
+predictions <- predict(model, newdata = data.frame(W = new_w))
+
+
+p <- ggplot(data_subset, aes(x = W, y = LAKTAT)) +
+  geom_point() +
+  geom_line(data = data.frame(W = new_w, LAKTAT = predictions), aes(x = W, y = LAKTAT), color = "red") +
+  geom_hline(yintercept = 4, color = "blue") +
+  geom_hline(yintercept = 2, color = "green") +
+  labs(x = "Watt", y = "Laktat") +
+  theme_minimal() +
+  xlim(0, 300) +
+  ylim(1, 10)
+
+
+intersection_watt_2 <- new_w[which.min(abs(predictions - 2))]
+
+cat("Intersection point between the line at y = 2 and the regression line:\n")
+cat("Watt:", intersection_watt_2, "Laktat:", 2, "\n")
+
+
+intersection_watt_4 <- new_w[which.min(abs(predictions - 4))]
+
+cat("Intersection point between the line at y = 4 and the regression line:\n")
+cat("Watt:", intersection_watt_4, "Laktat:", 4, "\n")
+
+
+find_intersection <- function(data, y_value) {
+  data_subset <- data %>% filter(!is.na(LAKTAT))
+  model <- lm(LAKTAT ~ W, data = data_subset)
+  new_w <- seq(0, 300, length.out = 100)
+  predictions <- predict(model, newdata = data.frame(W = new_w))
+  intersection_watt <- new_w[which.min(abs(predictions - y_value))]
+  return(c(Watt = intersection_watt, Laktat = y_value))
+}
+
+
+create_plot <- function(data, y_value, x_limit = 300) {
+  data_subset <- data %>% filter(!is.na(LAKTAT))
+  model <- lm(LAKTAT ~ W, data = data_subset)
+  new_w <- seq(0, x_limit, length.out = 100)
+  predictions <- predict(model, newdata = data.frame(W = new_w))
+  
+  
+  intersection <- find_intersection(data, y_value)
+  
+  ggplot(data_subset, aes(x = W, y = LAKTAT)) +
+    geom_point() +
+    geom_line(data = data.frame(W = new_w, LAKTAT = predictions), aes(x = W, y = LAKTAT), color = "red") +
+    geom_hline(yintercept = 4, color = "blue") +
+    geom_hline(yintercept = y_value, color = "green") +
+    labs(x = "Watt", y = "Laktat") +
+    theme_minimal() +
+    xlim(0, x_limit) +
+    ylim(1, 10) +
+    annotate("text", x = x_limit / 2, y = y_value - 0.5, label = paste("Laktat =", y_value, "mmol"), color = "green") +
+    annotate("text", x = x_limit / 2, y = 4.5, label = "Laktat = 4 mmol", color = "blue") +
+    annotate("point", x = intersection["Watt"], y = intersection["Laktat"], color = "red", size = 4)
+}
+
+
+data_id2_test1 <- data %>% filter(ID == 2, TEST == 1)
+cat("Intersection point for ID 2, Test 1 (2 mmol):\n")
+print(find_intersection(data_id2_test1, 2))
+plot_id2_test1 <- create_plot(data_id2_test1, 2, 350)
+print(plot_id2_test1)
+
+
+value_2mmol_id2_test1 <- find_intersection(data_id2_test1, 2)
+value_4mmol_id2_test1 <- find_intersection(data_id2_test1, 4)
+print("Intersection point for 2 mmol (ID 2, Test 1):")
+print(value_2mmol_id2_test1)
+print("Intersection point for 4 mmol (ID 2, Test 1):")
+print(value_4mmol_id2_test1)
+
+
+data_id2_test2 <- data %>% filter(ID == 2, TEST == 2)
+cat("Intersection point for ID 2, Test 2 (2 mmol):\n")
+print(find_intersection(data_id2_test2, 2))
+plot_id2_test2 <- create_plot(data_id2_test2, 2, 350)
+print(plot_id2_test2)
+
+
+value_2mmol_id2_test2 <- find_intersection(data_id2_test2, 2)
+value_4mmol_id2_test2 <- find_intersection(data_id2_test2, 4)
+print("Intersection point for 2 mmol (ID 2, Test 2):")
+print(value_2mmol_id2_test2)
+print("Intersection point for 4 mmol (ID 2, Test 2):")
+print(value_4mmol_id2_test2) 
+
+```
+
+
+Vi gjennomførte oppgaven for to personer fra datasettet.
+
+FP1 holdt 60W ved 2mmol laktat ved t1, og 117W ved 4mmol laktat ved t1
+FP1 holdt 105W ved 2mmol laktat, og 174W ved 4mmol laktat ved t2
+FP2 holdt 191W ved 2mmol laktat, og 311W ved 4mmol laktat ved t1
+FP2 holdt 205W ved 2mmol laktat, og 325W ved 4mmol laktat ved t2
+
+Typical error mellom tersklene var 31,06% for 2mmol laktat, og 39,29% for 4mmol laktat
+Typical error var større ved 4mmol enn 2mmol
+
+
+
+## Part 2: Predicting sizes of slopes of a qPCR calibration curve
+
+```{r}
+#| echo: false
+#| message: false
+
+data <- read_excel("qPCR-results_template_arbkravvv.xlsx")
+head(data)
+
+nytt_data <- data.frame(
+  X = data$`Log (sample quan)`, 
+  y = data$`Avg Ct`             
+)
+
+
+head(nytt_data)
+
+ggplot(nytt_data, aes(x = X, y = y)) +
+  geom_point() +  
+  geom_abline(intercept = 27, slope = -4.277, color = "black", linetype = "dashed") +  
+  labs(x = "log mw", y = "avg ct") +  
+  theme_minimal()
+
+subset_data <- data[, c("Ct1", "Ct2", "Ct3")]
+
+
+custom_sd <- function(x) {
+  if (all(is.na(x))) {
+    return(NA)  
+  } else {
+    return(sd(x, na.rm = TRUE))
+  }
+}
+
+
+standardavvik_mellom_ct <- apply(subset_data, 1, custom_sd)
+
+cat("Standardavvik for variasjonen mellom Ct1, Ct2, og Ct3 (med manglende verdier ignorert):\n")
+print(standardavvik_mellom_ct)
+
+((10^(-1/-4.277)) - 1) * 100
+```
+
+Tallene og grafen fra mine analyser viser at primerparene er ineffektive. Det er en rekke faktorer som kan ha påvirket resultatene, men det kan trolig være grunnet pippeteringsfeil underveis i behandlingen av DNA tråden. Tallene viste en primer efficiency på 71. Man ønsker å se et tall mellom 90-110.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Part 3: Intepreting a regression table
+
+
+
+```{r}
+#| echo: false
+
+data_subset <- hypertrophy %>% 
+  filter(!is.na(SQUAT_3RM), !is.na(FAST_CSA_T1))
+
+
+ggplot(data_subset, aes(x = FAST_CSA_T1, y = SQUAT_3RM)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Muscle Cross-Sectional Area at T1", y = "Squat 3RM Strength") +
+  ggtitle("Muscle CSA at T1 vs. Squat 3RM Strength")
+
+
+
+```
+Figuren viser en linjær regresjon imellom styrken på 3rm squat og tverssittarealet på muskelen
+
+```{r}
+#| echo: false
+
+#Regression table
+
+
+data_subset <- hypertrophy %>% 
+  filter(!is.na(SQUAT_3RM), !is.na(FAST_CSA_T1))
+
+
+regression_model <- lm(SQUAT_3RM ~ FAST_CSA_T1, data = data_subset)
+
+
+regression_summary <- summary(regression_model)
+
+
+coefficients <- coef(regression_summary)
+p_values <- coef(summary(regression_model))[, "Pr(>|t|)"]
+t_values <- coef(summary(regression_model))[, "t value"]
+standard_errors <- coef(summary(regression_model))[, "Std. Error"]
+
+
+regression_table <- data.frame(
+  Standard_Error = round(standard_errors, 3),
+  T_Value = round(t_values, 3),
+  P_Value = ifelse(p_values < 0.001, "< 0.001", format(p_values, nsmall = 3))
+)
+
+kable(regression_table, caption = "Regression Table", digits = 3) %>%
+  kable_styling(latex_options = c("scale_down")) %>%
+  column_spec(1, bold = TRUE)  
+# prøvde å få mer plass imnellom t-value og p-value uten og lykkes 
+
+```
+
+I regresjons tabellen viser vi “standard Error/standard avvik” som er  et mål for å vise hvor stor spredning det er i estimatene våre. 
+T - value er en statistisk måling på hvor signifikant koeffisienten vår er. Altså en måling på hvor stor sannsynlighet det er at resultatene våre skyldes tilfeldigheter. Tabellen vår viser at “interceptet” har en t-value på 6.507 som vil si at det er veldig liten sannsynlighet for at målingene våre er tilfeldige.
+
+P-value i tabellen vår viser to veldig forskjellige ting, den ene er lavere enn 0.001 mens den andre er på 0.50. P.value baserer seg på 0 hypotesen, som vil si at p-value <0.001 er mer signifikant funn enn p-value på 0.50. En p-value som er under 0.05 blir ofte sett på signifikante funn, av og til er grensen enda lavere enn 0.05 f.eks innen for medisin. Dette vi da konkludere med at det er en signifikant lineær sammenheng mellom muskelstørrelse og muskelstyrke.
+
+
+

@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Christian G. Jenssen, Marius Bjekeset, Oliver Bottolfs, Sivert Solheim">
 
-<title>arbeidskrav 3 del 3</title>
+<title>arbeidskrav 3</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -68,6 +69,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="Del 3_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="Del 3_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+<script src="Del 3_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="Del 3_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
 
 </head>
 
@@ -79,13 +83,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">arbeidskrav 3 del 3</h1>
+<h1 class="title">arbeidskrav 3</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Christian G. Jenssen, Marius Bjekeset, Oliver Bottolfs, Sivert Solheim </p>
+          </div>
+  </div>
     
   
     
@@ -94,72 +104,131 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="tolking-av-en-regresjonstabell" class="level2">
-<h2 class="anchored" data-anchor-id="tolking-av-en-regresjonstabell"><strong>Tolking av en regresjonstabell</strong></h2>
+<section id="part-1-lactate-thresholds" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-lactate-thresholds">Part 1: Lactate thresholds</h2>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'dplyr'</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intersection point between the line at y = 2 and the regression line:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Watt: 60.60606 Laktat: 2 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intersection point between the line at y = 4 and the regression line:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Watt: 118.1818 Laktat: 4 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intersection point for ID 2, Test 1 (2 mmol):</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Watt   Laktat 
+190.9091   2.0000 </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:stats':
-
-    filter, lag</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:base':
-
-    intersect, setdiff, setequal, union</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data_subset <span class="ot">&lt;-</span> hypertrophy <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(SQUAT_3RM), <span class="sc">!</span><span class="fu">is.na</span>(FAST_CSA_T1))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_subset, <span class="fu">aes</span>(<span class="at">x =</span> FAST_CSA_T1, <span class="at">y =</span> SQUAT_3RM)) <span class="sc">+</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Muscle Cross-Sectional Area at T1"</span>, <span class="at">y =</span> <span class="st">"Squat 3RM Strength"</span>) <span class="sc">+</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Linear Regression: Muscle CSA at T1 vs. Squat 3RM Strength"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+<pre><code>Warning: Removed 38 rows containing missing values (`geom_line()`).</code></pre>
 </div>
 <div class="cell-output-display">
 <p><img src="Del-3_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Intersection point for 2 mmol (ID 2, Test 1):"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Watt   Laktat 
+190.9091   2.0000 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Intersection point for 4 mmol (ID 2, Test 1):"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Watt Laktat 
+   300      4 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intersection point for ID 2, Test 2 (2 mmol):</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Watt   Laktat 
+203.0303   2.0000 </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 41 rows containing missing values (`geom_line()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Del-3_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Intersection point for 2 mmol (ID 2, Test 2):"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Watt   Laktat 
+203.0303   2.0000 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Intersection point for 4 mmol (ID 2, Test 2):"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Watt Laktat 
+   300      4 </code></pre>
+</div>
+</div>
+<p>Vi gjennomførte oppgaven for to personer fra datasettet.</p>
+<p>FP1 holdt 60W ved 2mmol laktat ved t1, og 117W ved 4mmol laktat ved t1 FP1 holdt 105W ved 2mmol laktat, og 174W ved 4mmol laktat ved t2 FP2 holdt 191W ved 2mmol laktat, og 311W ved 4mmol laktat ved t1 FP2 holdt 205W ved 2mmol laktat, og 325W ved 4mmol laktat ved t2</p>
+<p>Typical error mellom tersklene var 31,06% for 2mmol laktat, og 39,29% for 4mmol laktat Typical error var større ved 4mmol enn 2mmol</p>
+</section>
+<section id="part-2-predicting-sizes-of-slopes-of-a-qpcr-calibration-curve" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-predicting-sizes-of-slopes-of-a-qpcr-calibration-curve">Part 2: Predicting sizes of slopes of a qPCR calibration curve</h2>
+</section>
+<section id="tolking-av-en-regresjonstabell" class="level2">
+<h2 class="anchored" data-anchor-id="tolking-av-en-regresjonstabell"><strong>Tolking av en regresjonstabell</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data_subset <span class="ot">&lt;-</span> hypertrophy <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(SQUAT_3RM), <span class="sc">!</span><span class="fu">is.na</span>(FAST_CSA_T1))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_subset, <span class="fu">aes</span>(<span class="at">x =</span> FAST_CSA_T1, <span class="at">y =</span> SQUAT_3RM)) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Muscle Cross-Sectional Area at T1"</span>, <span class="at">y =</span> <span class="st">"Squat 3RM Strength"</span>) <span class="sc">+</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Linear Regression: Muscle CSA at T1 vs. Squat 3RM Strength"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Del-3_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_subset <span class="ot">&lt;-</span> hypertrophy <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(SQUAT_3RM), <span class="sc">!</span><span class="fu">is.na</span>(FAST_CSA_T1))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>regression_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(SQUAT_3RM <span class="sc">~</span> FAST_CSA_T1, <span class="at">data =</span> data_subset)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>regression_summary <span class="ot">&lt;-</span> <span class="fu">summary</span>(regression_model)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>coefficients <span class="ot">&lt;-</span> <span class="fu">coef</span>(regression_summary)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>p_values <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(regression_model))[, <span class="st">"Pr(&gt;|t|)"</span>]</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>t_values <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(regression_model))[, <span class="st">"t value"</span>]</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>standard_errors <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(regression_model))[, <span class="st">"Std. Error"</span>]</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>regression_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Coefficient =</span> <span class="fu">rownames</span>(coefficients),</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">round</span>(coefficients, <span class="dv">3</span>),</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Std_Error =</span> <span class="fu">round</span>(standard_errors, <span class="dv">3</span>),</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">T_Value =</span> <span class="fu">round</span>(t_values, <span class="dv">3</span>),</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">P_Value =</span> <span class="fu">sprintf</span>(<span class="st">"%.3f"</span>, p_values) </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">kable</span>(regression_table, <span class="at">caption =</span> <span class="st">"Regression Table"</span>, <span class="at">digits =</span> <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Regression Table</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Standard_Error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">T_Value</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">P_Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">(Intercept)</td>
+<td style="text-align: right;">18.301</td>
+<td style="text-align: right;">6.507</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">FAST_CSA_T1</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.683</td>
+<td style="text-align: left;">5.003886e-01</td>
+</tr>
+</tbody>
+</table>
 
-Table: Regression Table
 
-|            |Coefficient | Estimate.Estimate| Estimate.Std..Error| Estimate.t.value| Estimate.Pr...t..| Std_Error| T_Value|P_Value |
-|:-----------|:-----------|-----------------:|-------------------:|----------------:|-----------------:|---------:|-------:|:-------|
-|(Intercept) |(Intercept) |            119.08|                18.3|             6.51|               0.0|      18.3|    6.51|0.000   |
-|FAST_CSA_T1 |FAST_CSA_T1 |              0.00|                 0.0|             0.68|               0.5|       0.0|    0.68|0.500   |</code></pre>
 </div>
 </div>
 </section>
